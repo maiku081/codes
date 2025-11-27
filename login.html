@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <title>CodeQuiz Champions</title>
+</head>
+<body>
+    <div class="dashboard"> 
+        <div class="logo"> 
+            <img src="glitterypopcorn-wizard.gif" class="pic"> 
+            <a href="index.php"> <span class="logo-text"> QuizzardCode </a> </span>
+        </div>
+        <!-- Navigation links removed -->
+    </div>
+
+    <div class="login-container">
+        <div class="pacman-theme">
+            <div class="pacman">
+                <div class="pacman-top"></div>
+                <div class="pacman-bottom"></div>
+                <div class="pacman-food"></div>
+            </div>
+            <div class="ghost">
+                <div class="ghost-body"></div>
+                <div class="ghost-eyes">
+                    <div class="eye left"></div>
+                    <div class="eye right"></div>
+                </div>
+                <div class="ghost-skirt">
+                    <div class="skirt"></div>
+                    <div class="skirt"></div>
+                    <div class="skirt"></div>
+                </div>
+            </div>
+        </div>
+        <img src="glitterypopcorn-wizard.gif" class="pic1">
+        <div class="textlog"><b>QuizzardCode</b></div>
+        <div class="textlog1">Join the adventure! Create an account or log in to play</div>
+
+        <div id="boot1">
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('login', this, 0)">Login</button>
+                <button class="tab" onclick="switchTab('register', this, 1)">Register</button>
+                <button class="tab" onclick="switchTab('admin', this, 2)">Admin</button>
+                <div class="tab-indicator"></div>
+              </div>
+              
+        </div>
+            
+        <div id="popup" class="popup"></div>
+        <!-- Login Form -------------------------------------------->
+        <div id="login-form" class="form-content active">
+            <?php if(isset($_GET['error'])): ?>
+                <div class="error-message" style="color: #ff6b6b; margin-bottom: 15px; text-align: center;">
+                    <?php 
+                        if($_GET['error'] === 'email') {
+                            echo 'Email not found. Please check your email or register.';
+                        } elseif($_GET['error'] === 'password') {
+                            echo 'Incorrect password. Please try again.';
+                        } else {
+                            echo 'An error occurred. Please try again.';
+                        }
+                    ?>
+                </div>
+            <?php endif; ?>
+            <form action="login.php" method="POST" onsubmit="return validateLogin()">
+                <div class="form-group">
+                    <label>Email</label>
+                    <i class="bi bi-envelope" style="color: white;"></i>
+                    <input type="email" name="email" id="email" placeholder="Enter your Email Address" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <i class="bi bi-lock" style="color: white;"></i>
+                    <input type="password" name="password" id="password" placeholder="Enter your Password" required>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="submit-btn">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Register Form -------------------------------------------------->
+        <div id="register-form" class="form-content">
+            <form action="register.php" method="POST">
+                <div class="name-fields">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" placeholder="John" name="fname">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" placeholder="Doe" name="lname">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <i class="bi bi-person-circle" style="color: white;"></i>
+                    <input type="text" placeholder="Enter your Username" name="username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                 <i class="bi bi-envelope" style="color: white;"></i>
+                    <input type="email" placeholder="Enter your Email Address"  name="email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <i class="bi bi-lock" style="color: white;"></i>
+                    <input type="password" placeholder="Enter your Password" name="password">
+                </div>
+                <input type="submit" class="submit-btn" value="Create Account">
+            </form>
+        </div>
+
+        <!-- Admin Form -------------------------------------------->
+      <div id="admin-form" class="form-content">
+        <form action="admin.php" method="POST">
+            <div class="form-group">
+                <label> Username </label>
+                <i class="bi bi-person-fill-lock" style="color: white;"></i>
+                <input type="text" name="username" placeholder="Enter your Username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <i class="bi bi-lock" style="color: white;"></i>
+                <input type="password" name="password" placeholder="Enter your Password">
+            </div>
+            <button type="submit" class="submit-btn">Sign In</button>
+        </form>
+    </div>
+
+    <script>
+        function validateLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return false;
+            }
+            return true;
+        }
+        
+        // Check for error in URL and show appropriate message
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                const error = urlParams.get('error');
+                if (error === 'email' || error === 'password') {
+                    // Error message is now handled by PHP above
+                    console.log('Login error:', error);
+                }
+            }
+        });
+    </script>
+    <script src="index.js"></script>
+</body>
+</html>
