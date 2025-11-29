@@ -1,0 +1,763 @@
+<?php
+session_start();
+
+// Redirect to login if not logged in
+if (!isset($_SESSION['user_name'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$username = htmlspecialchars($_SESSION['user_name']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizzardCode - User</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Dropdown styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            min-width: 220px;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            padding: 0.5rem 0;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 2px solid var(--accent);
+            transform-origin: top right;
+            animation: dropdownFadeIn 0.2s ease-out;
+        }
+
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dropdown-content a {
+            color: var(--primary);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+        }
+        
+        .dropdown-content a:hover {
+            background-color: rgba(255, 0, 255, 0.2);
+            color: var(--accent) !important;
+            padding-left: 20px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .dropdown {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .dropdown-content {
+                width: 100%;
+                position: relative !important;
+                border-radius: 0 0 4px 4px;
+                margin-top: 0.5rem;
+            }
+        }
+        :root {
+            --primary: #ff00ff;
+            --secondary: #00ffff;
+            --accent: #ffff00;
+            --bg: #000000;
+            --screen: #1a1a2e;
+            --pixel: 2px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+            image-rendering: pixelated;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--primary);
+            min-height: 100vh;
+            background: 
+                url('https://i.giphy.com/media/KAq5w47R9rmTuvtOYp3/giphy.gif') center/cover no-repeat fixed,
+                radial-gradient(circle at center, rgba(26, 26, 46, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%),
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 255, 0.1) 0px,
+                    rgba(255, 0, 255, 0.1) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            background-blend-mode: overlay, normal, normal;
+            font-size: 16px;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(26, 26, 46, 0.7) 100%
+            );
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .screen {
+            position: relative;
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--screen);
+            border: 4px solid var(--primary);
+            transform-style: preserve-3d;
+            box-shadow: 
+                20px 20px 0 rgba(255, 0, 255, 0.2),
+                40px 40px 0 rgba(0, 255, 255, 0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--accent);
+            text-shadow: 
+                3px 3px 0 var(--primary),
+                6px 6px 0 var(--secondary);
+            margin: 1rem 0;
+            line-height: 1.3;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            border: 4px solid var(--primary);
+            box-shadow: 
+                4px 4px 0 var(--secondary),
+                8px 8px 0 var(--accent);
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 
+                2px 2px 0 var(--secondary),
+                4px 4px 0 var(--accent);
+        }
+
+        .btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--secondary);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin-left: 1rem;
+            font-size: 0.7rem;
+            border-radius: 4px;
+        }
+
+        .beginner { background: #4CAF50; color: #000; }
+        .intermediate { background: #2196F3; color: #000; }
+        .advanced { background: #f44336; color: #000; }
+
+        .difficulty-select option.beginner { background: #4CAF50; color: #000; }
+        .difficulty-select option.intermediate { background: #2196F3; color: #000; }
+        .difficulty-select option.advanced { background: #f44336; color: #000; }
+        
+        .difficulty-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(255, 255, 0, 0.3);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2rem auto 0;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Taskbar -->
+    <div class="taskbar" style="position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: rgba(0, 0, 0, 0.9); border-bottom: 3px solid var(--primary); z-index: 1000; padding: 1.2rem 3rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(255, 0, 255, 0.4);">
+        <div class="taskbar-left" style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="logo" style="display: flex; align-items: center; gap: 1rem; margin: 0; padding: 0;">
+                <img src="hacker.gif" alt="QuizzardCode Logo" style="width: 40px; height: 40px; object-fit: contain;">
+                <a href="index.php" style="color: var(--accent); text-decoration: none; font-size: 1.1rem; text-shadow: 0 0 5px var(--accent);">
+                    QuizzardCode
+                </a>
+            </div>
+            <div class="taskbar-time" style="background: rgba(0, 0, 0, 0.5); padding: 0.4rem 1rem; border: 1px solid var(--secondary); color: var(--secondary); font-size: 0.85rem;">
+                <span id="current-time">00:00:00</span>
+            </div>
+        </div>
+        <div class="taskbar-right" style="display: flex; gap: 1.5rem; align-items: center; margin-left: auto; margin-right: 2rem; position: relative;">
+            <!-- Profile Dropdown -->
+            <div class="dropdown" style="position: relative; display: inline-block;">
+                <button class="dropbtn" style="
+                    padding: 0.7rem 1.5rem;
+                    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 20, 30, 0.9));
+                    border: 2px solid var(--primary);
+                    color: var(--accent);
+                    font-family: 'Press Start 2P', cursive;
+                    font-size: 0.8rem;
+                    cursor: pointer;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    position: relative;
+                    overflow: hidden;
+                    z-index: 1;
+                    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    border-radius: 6px;
+                    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+                ">
+                    <span style="position: relative; z-index: 2; filter: drop-shadow(0 0 3px var(--accent));">👤</span>
+                    <span style="position: relative; z-index: 2;"><?php echo strtoupper($username); ?></span>
+                    <span style="position: relative; z-index: 2; margin-left: 0.25rem; font-size: 0.6em; transition: transform 0.3s ease;">▼</span>
+                    <span style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, 
+                            transparent, 
+                            rgba(0, 255, 255, 0.1), 
+                            transparent
+                        );
+                        transform: translateX(-100%);
+                        transition: transform 0.6s;
+                        z-index: 1;
+                    "></span>
+                </button>
+                <div class="dropdown-content" style="
+                    display: none;
+                    position: absolute;
+                    right: 0;
+                    top: calc(100% + 5px);
+                    background: rgba(5, 10, 20, 0.98);
+                    min-width: 250px;
+                    border: 2px solid var(--primary);
+                    border-radius: 8px;
+                    z-index: 1001;
+                    box-shadow: 0 5px 25px rgba(0, 255, 255, 0.2);
+                    padding: 0.75rem 0;
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border-top: 3px solid var(--accent);
+                    transform-origin: top right;
+                    animation: dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 2px;
+                        background: linear-gradient(90deg, 
+                            transparent, 
+                            var(--accent), 
+                            transparent
+                        );
+                        opacity: 0.7;
+                    "></div>
+                    <a href="#" class="dropdown-item" style="
+                        color: var(--primary);
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.7));">🏆</span>
+                        <span>ACHIEVEMENTS</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
+                    <a href="tasks.php" class="dropdown-item" style="
+                        color: var(--primary);
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.7));">🎮</span>
+                        <span>TASKS</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
+                    <a href="leaderboard.php" class="dropdown-item" style="
+                        color: var(--primary);
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.7));">📊</span>
+                        <span>LEADERBOARD</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
+                    <div style="
+                        margin: 10px 15px 5px;
+                        height: 1px;
+                        background: linear-gradient(90deg, 
+                            transparent, 
+                            rgba(0, 255, 255, 0.3), 
+                            transparent
+                        );
+                    "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen" style="margin-top: 100px;">
+        <h1>Quiz Challenges</h1>
+        <p style="text-align: center; color: var(--secondary); margin-bottom: 2rem;">Test your Python knowledge with these interactive challenges</p>
+        
+        <div class="container">
+            <!-- Quiz Container -->
+            <div class="card" style="flex: 1 1 45%; min-width: 300px; max-width: 500px; margin: 0;">
+                <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>Python Quiz</h3>
+                    </div>
+                    <p style="color: var(--secondary); margin-bottom: 1.5rem; flex-grow: 1;">Test your Python knowledge with this interactive quiz. Answer questions and debug code snippets to progress!</p>
+                    <div style="display: flex; justify-content: space-between; color: var(--secondary); font-size: 0.8rem; margin-bottom: 1.5rem;">
+                        <span>• 10 questions</span>
+                        <span>• 30s time limit</span>
+                    </div>
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" style="height: 40px; margin: 0 auto 1.5rem; display: block;">
+                </div>
+                <button class="btn" style="width: 100%; margin-top: auto;">Start Quiz</button>
+            </div>
+
+            <!-- Debugging Container -->
+            <div class="card" style="flex: 1 1 45%; min-width: 300px; max-width: 500px; margin: 0;">
+                <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div style="margin-bottom: 1rem;">
+                        <h3>Debugging Challenge</h3>
+                    </div>
+                    <p style="color: var(--secondary); margin-bottom: 1.5rem; flex-grow: 1;">Hone your debugging skills by finding and fixing errors in Python code under time pressure.</p>
+                    <div style="display: flex; justify-content: space-between; color: var(--secondary); font-size: 0.8rem; margin-bottom: 1.5rem;">
+                        <span>• Debugging challenges</span>
+                        <span>• 30s per challenge</span>
+                    </div>
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" style="height: 40px; margin: 0 auto 1.5rem; display: block;">
+                </div>
+                <button class="btn" style="width: 100%; margin-top: auto;">Debug</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Dropdown functionality with animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            let activeDropdown = null;
+            
+            // Add animation keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes dropdownFadeIn {
+                    from { 
+                        opacity: 0;
+                        transform: translateY(-10px) scale(0.98);
+                    }
+                    to { 
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                @keyframes dropdownFadeOut {
+                    from { 
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                    to { 
+                        opacity: 0;
+                        transform: translateY(-10px) scale(0.98);
+                    }
+                }
+                @keyframes buttonPulse {
+                    0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Toggle dropdown with animation
+            function toggleDropdown(button, content) {
+                const isOpen = content.style.display === 'block';
+                
+                // Close all dropdowns first
+                closeAllDropdowns();
+                
+                // If not already open, open the clicked one with animation
+                if (!isOpen) {
+                    content.style.display = 'block';
+                    content.style.animation = 'dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+                    activeDropdown = content;
+                    button.setAttribute('aria-expanded', 'true');
+                    // Rotate arrow
+                    const arrow = button.querySelector('span:last-child');
+                    if (arrow) arrow.style.transform = 'rotate(180deg)';
+                    // Add active state to button
+                    button.style.background = 'linear-gradient(135deg, rgba(0, 30, 50, 0.9), rgba(0, 60, 90, 0.9))';
+                    button.style.boxShadow = '0 0 25px rgba(0, 255, 255, 0.5)';
+                }
+            }
+            
+            // Close all dropdowns with animation
+            function closeAllDropdowns() {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    if (dropdown.style.display === 'block') {
+                        dropdown.style.animation = 'dropdownFadeOut 0.2s ease-out';
+                        setTimeout(() => {
+                            dropdown.style.display = 'none';
+                        }, 200);
+                    }
+                    
+                    const button = dropdown.previousElementSibling;
+                    if (button && button.classList.contains('dropbtn')) {
+                        button.setAttribute('aria-expanded', 'false');
+                        // Reset arrow rotation
+                        const arrow = button.querySelector('span:last-child');
+                        if (arrow) arrow.style.transform = 'rotate(0deg)';
+                        // Reset button state
+                        button.style.background = 'linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 20, 30, 0.9))';
+                        button.style.boxShadow = '0 0 15px rgba(0, 255, 255, 0.3)';
+                    }
+                });
+                activeDropdown = null;
+            }
+            
+            // Set up each dropdown
+            dropdowns.forEach(dropdown => {
+                const button = dropdown.querySelector('.dropbtn');
+                const content = dropdown.querySelector('.dropdown-content');
+                
+                // Toggle on button click
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleDropdown(button, content);
+                });
+                
+                // Enhanced hover effects
+                button.addEventListener('mouseenter', function() {
+                    if (content.style.display !== 'block') {
+                        this.style.background = 'linear-gradient(135deg, rgba(0, 30, 50, 0.9), rgba(0, 60, 90, 0.9))';
+                        this.style.boxShadow = '0 0 25px rgba(0, 255, 255, 0.4)';
+                        this.style.animation = 'buttonPulse 2s infinite';
+                        
+                        // Shine effect
+                        const shine = this.querySelector('span:last-of-type');
+                        if (shine) {
+                            shine.style.transform = 'translateX(100%)';
+                            setTimeout(() => {
+                                shine.style.transition = 'none';
+                                shine.style.transform = 'translateX(-100%)';
+                                setTimeout(() => {
+                                    shine.style.transition = 'transform 0.6s';
+                                }, 10);
+                            }, 600);
+                        }
+                    }
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    if (content.style.display !== 'block') {
+                        this.style.background = 'linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 20, 30, 0.9))';
+                        this.style.boxShadow = '0 0 15px rgba(0, 255, 255, 0.3)';
+                        this.style.animation = 'none';
+                    }
+                });
+                
+                // Enhanced item hover effects
+                const items = content.querySelectorAll('.dropdown-item');
+                items.forEach((item, index) => {
+                    // Add transition delay for staggered animation
+                    item.style.transitionDelay = `${index * 0.05}s`;
+                    
+                    item.addEventListener('mouseenter', function() {
+                        this.style.background = 'rgba(0, 150, 200, 0.2)';
+                        this.style.borderLeftColor = 'var(--accent)';
+                        this.style.color = 'var(--accent)';
+                        this.style.transform = 'translateX(5px)';
+                        this.style.boxShadow = 'inset 0 0 15px rgba(0, 255, 255, 0.2)';
+                        
+                        const arrow = this.querySelector('span:last-child');
+                        if (arrow) {
+                            arrow.style.opacity = '1';
+                            arrow.style.transform = 'translateX(5px)';
+                        }
+                    });
+                    
+                    item.addEventListener('mouseleave', function() {
+                        this.style.background = 'rgba(0, 20, 30, 0.3)';
+                        this.style.borderLeftColor = 'transparent';
+                        this.style.color = 'var(--primary)';
+                        this.style.transform = 'translateX(0)';
+                        this.style.boxShadow = 'none';
+                        
+                        const arrow = this.querySelector('span:last-child');
+                        if (arrow) {
+                            arrow.style.opacity = '0.7';
+                            arrow.style.transform = 'translateX(0)';
+                        }
+                    });
+                    
+                    // Click effect
+                    item.addEventListener('mousedown', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    item.addEventListener('mouseup', function() {
+                        this.style.transform = 'translateX(5px)';
+                    });
+                    
+                    item.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateX(0)';
+                    });
+                });
+                
+                // Close when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        closeAllDropdowns();
+                    }
+                });
+                
+                // Enhanced keyboard navigation
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                        e.preventDefault();
+                        toggleDropdown(button, content);
+                        // Focus first item when opened with keyboard
+                        if (content.style.display === 'block' && items.length > 0) {
+                            setTimeout(() => items[0].focus(), 100);
+                        }
+                    } else if (e.key === 'Escape' && content.style.display === 'block') {
+                        closeAllDropdowns();
+                        button.focus();
+                    } else if (e.key === 'ArrowDown' && content.style.display !== 'block') {
+                        e.preventDefault();
+                        toggleDropdown(button, content);
+                        if (items.length > 0) items[0].focus();
+                    }
+                });
+                
+                // Handle keyboard navigation within dropdown
+                content.addEventListener('keydown', function(e) {
+                    const currentItem = document.activeElement;
+                    const currentIndex = Array.from(items).indexOf(currentItem);
+                    
+                    if (e.key === 'Escape') {
+                        closeAllDropdowns();
+                        button.focus();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextIndex = (currentIndex + 1) % items.length;
+                        items[nextIndex].focus();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevIndex = (currentIndex - 1 + items.length) % items.length;
+                        items[prevIndex].focus();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        items[0].focus();
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        items[items.length - 1].focus();
+                    } else if (e.key === 'Tab' && !e.shiftKey && currentIndex === items.length - 1) {
+                        // Loop back to first item when tabbing from last item
+                        e.preventDefault();
+                        items[0].focus();
+                    } else if (e.key === 'Tab' && e.shiftKey && currentIndex <= 0) {
+                        // Loop to last item when shift+tabbing from first item
+                        e.preventDefault();
+                        items[items.length - 1].focus();
+                    }
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            // Add touch support for mobile
+            document.addEventListener('touchstart', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    closeAllDropdowns();
+                }
+            }, { passive: true });
+
+            // Update current time in the taskbar
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true 
+                });
+                const timeElement = document.getElementById('current-time');
+                if (timeElement) {
+                    timeElement.textContent = timeString;
+                }
+            }
+
+            // Update time immediately and then every second
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Add hover effects for taskbar buttons
+            document.querySelectorAll('.taskbar-btn').forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-2px)';
+                    btn.style.boxShadow = '0 5px 15px var(--primary)';
+                });
+
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0)';
+                    btn.style.boxShadow = 'none';
+                });
+            });
+        }); // Close the DOMContentLoaded event listener
+    </script>
+    </body>
+</html>
