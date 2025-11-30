@@ -436,46 +436,56 @@ $username = htmlspecialchars($_SESSION['user_name']);
                             transparent
                         );
                     "></div>
+                    <a href="logout.php" class="dropdown-item" style="
+                        color: #ff4444;
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(255, 68, 68, 0.7));">🚪</span>
+                        <span>LOGOUT</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: #ff4444;
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="screen" style="margin-top: 100px;">
-        <h1>Quiz Challenges</h1>
+        <h1>Challenges</h1>
         <p style="text-align: center; color: var(--secondary); margin-bottom: 2rem;">Test your Python knowledge with these interactive challenges</p>
         
         <div class="container">
-            <!-- Quiz Container -->
-            <div class="card" style="flex: 1 1 45%; min-width: 300px; max-width: 500px; margin: 0;">
+            <!-- Merged Quiz & Debugging Container -->
+            <div class="card" style="flex: 1 1 60%; min-width: 340px; max-width: 620px; margin: 0 auto;">
                 <div style="flex-grow: 1; display: flex; flex-direction: column;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3>Python Quiz</h3>
+                        <h3>Quiz & Debugging</h3>
                     </div>
-                    <p style="color: var(--secondary); margin-bottom: 1.5rem; flex-grow: 1;">Test your Python knowledge with this interactive quiz. Answer questions and debug code snippets to progress!</p>
-                    <div style="display: flex; justify-content: space-between; color: var(--secondary); font-size: 0.8rem; margin-bottom: 1.5rem;">
-                        <span>• 10 questions</span>
-                        <span>• 30s time limit</span>
-                    </div>
+                    <p style="color: var(--secondary); margin-bottom: 1.5rem; flex-grow: 1;">Test your Python mastery with interactive quizzes and hands-on debugging challenges. Answer questions and fix code to climb the ranks!</p>
                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" style="height: 40px; margin: 0 auto 1.5rem; display: block;">
+                    <a href="task.html" class="btn" style="width: 100%; margin-top: auto; font-size: 0.9rem; padding: 0.7rem 1.4rem; letter-spacing: 2px; text-align: center;">Gamemodes</a>
                 </div>
-                <button class="btn" style="width: 100%; margin-top: auto;">Start Quiz</button>
-            </div>
-
-            <!-- Debugging Container -->
-            <div class="card" style="flex: 1 1 45%; min-width: 300px; max-width: 500px; margin: 0;">
-                <div style="flex-grow: 1; display: flex; flex-direction: column;">
-                    <div style="margin-bottom: 1rem;">
-                        <h3>Debugging Challenge</h3>
-                    </div>
-                    <p style="color: var(--secondary); margin-bottom: 1.5rem; flex-grow: 1;">Hone your debugging skills by finding and fixing errors in Python code under time pressure.</p>
-                    <div style="display: flex; justify-content: space-between; color: var(--secondary); font-size: 0.8rem; margin-bottom: 1.5rem;">
-                        <span>• Debugging challenges</span>
-                        <span>• 30s per challenge</span>
-                    </div>
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" style="height: 40px; margin: 0 auto 1.5rem; display: block;">
-                </div>
-                <button class="btn" style="width: 100%; margin-top: auto;">Debug</button>
             </div>
         </div>
     </div>
