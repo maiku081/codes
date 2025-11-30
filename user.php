@@ -1,13 +1,12 @@
 <?php
-session_start();
-
-// Redirect to login if not logged in
-if (!isset($_SESSION['user_name'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$username = htmlspecialchars($_SESSION['user_name']);
+// Login check removed for testing
+// session_start();
+// if (!isset($_SESSION['user_name'])) {
+//     header("Location: login.php");
+//     exit();
+// }
+// $username = htmlspecialchars($_SESSION['user_name']);
+$username = "Guest"; // Default username for testing
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -337,7 +336,7 @@ $username = htmlspecialchars($_SESSION['user_name']);
                         );
                         opacity: 0.7;
                     "></div>
-                    <a href="#" class="dropdown-item" style="
+                    <a href="index.php" class="dropdown-item" style="
                         color: var(--primary);
                         padding: 14px 25px;
                         text-decoration: none;
@@ -346,6 +345,36 @@ $username = htmlspecialchars($_SESSION['user_name']);
                         gap: 12px;
                         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                         border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.7));">🏠</span>
+                        <span>HOME</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
+                    <a href="user.php" class="dropdown-item" style="
+                        color: var(--accent);
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid var(--accent);
                         margin: 4px 10px;
                         position: relative;
                         overflow: hidden;
@@ -367,7 +396,7 @@ $username = htmlspecialchars($_SESSION['user_name']);
                             transition: all 0.3s ease;
                         ">▶</span>
                     </a>
-                    <a href="tasks.php" class="dropdown-item" style="
+                    <a href="task.php" class="dropdown-item" style="
                         color: var(--primary);
                         padding: 14px 25px;
                         text-decoration: none;
@@ -436,6 +465,36 @@ $username = htmlspecialchars($_SESSION['user_name']);
                             transparent
                         );
                     "></div>
+                    <a href="logout.php" class="dropdown-item" style="
+                        color: #ff4444;
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(255, 68, 68, 0.7));">🚪</span>
+                        <span>LOGOUT</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: #ff4444;
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
                 </div>
             </div>
         </div>

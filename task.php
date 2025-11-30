@@ -20,6 +20,14 @@ $username = "Guest"; // Default username for testing
         .dropdown-content {
             display: none;
             position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--primary);
+            min-width: 200px;
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease-out;
             right: 0;
             background: rgba(0, 0, 0, 0.95);
             min-width: 220px;
@@ -42,21 +50,75 @@ $username = "Guest"; // Default username for testing
         
         .dropdown-content a {
             color: var(--primary);
-            padding: 12px 16px;
+            padding: 12px 20px;
             text-decoration: none;
             display: block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
             transition: all 0.2s ease;
             border-bottom: 1px solid rgba(255, 0, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-content a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
         }
         
         .dropdown-content a:hover {
-            background-color: rgba(255, 0, 255, 0.2);
-            color: var(--accent) !important;
-            padding-left: 20px;
+            background: rgba(255, 0, 255, 0.1);
+            color: var(--accent);
+            padding-left: 25px;
+        }
+        
+        .dropdown-content a:hover::before {
+            transform: scaleY(1);
         }
 
         .dropdown:hover .dropdown-content {
             display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Custom scrollbar for dropdowns */
+        .dropdown-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .dropdown-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
         }
 
         /* Mobile responsiveness */
@@ -149,6 +211,34 @@ $username = "Guest"; // Default username for testing
                 6px 6px 0 var(--secondary);
             margin: 1rem 0;
             line-height: 1.3;
+        }
+
+        .dropbtn {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 20, 30, 0.9));
+            color: var(--primary);
+            padding: 0.8rem 1.5rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .dropbtn:hover {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 30, 40, 0.95));
+            color: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .dropbtn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
         }
 
         .btn {
@@ -372,6 +462,36 @@ $username = "Guest"; // Default username for testing
                         );
                         opacity: 0.7;
                     "></div>
+                    <a href="index.php" class="dropdown-item" style="
+                        color: var(--primary);
+                        padding: 14px 25px;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        border-left: 4px solid transparent;
+                        margin: 4px 10px;
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 4px;
+                        background: rgba(0, 20, 30, 0.3);
+                        font-family: 'Press Start 2P', cursive;
+                        font-size: 0.7rem;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    ">
+                        <span style="font-size: 1.1em; filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.7));">🏠</span>
+                        <span>HOME</span>
+                        <span style="
+                            position: absolute;
+                            right: 15px;
+                            opacity: 0.7;
+                            font-size: 0.7em;
+                            color: var(--accent);
+                            transition: all 0.3s ease;
+                        ">▶</span>
+                    </a>
                     <a href="user.php" class="dropdown-item" style="
                         color: var(--primary);
                         padding: 14px 25px;
@@ -697,10 +817,19 @@ $username = "Guest"; // Default username for testing
 
                 foreach ($levels as $index => $level) {
                     $levelNum = $index + 1;
+                    // Lock all levels except beginner level 1
+                    $isLocked = !($difficulty === 'beginner' && $levelNum === 1);
+                    $lockedClass = $isLocked ? 'locked' : '';
+                    $disabledStyle = $isLocked ? 'opacity: 0.6; pointer-events: none;' : '';
+                    $lockIcon = $isLocked ? '🔒 ' : '';
+                    $startButton = $isLocked 
+                        ? "<div class='btn' style='font-size: 0.8rem; padding: 0.6rem 1.2rem; opacity: 0.7; background: #666;'>Locked</div>"
+                        : "<a href='quiz.php?difficulty=$difficulty&level=$levelNum' class='btn' style='font-size: 0.8rem; padding: 0.6rem 1.2rem;'>Start</a>";
+                    
                     echo "
-                    <div class='task-card' data-gamemode='quiz' data-difficulty='$difficulty'>
+                    <div class='task-card $lockedClass' data-gamemode='quiz' data-difficulty='$difficulty' style='$disabledStyle'>
                         <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;'>
-                            <h3 style='margin: 0; font-size: 0.8rem;'>" . strtoupper($level['title']) . "</h3>
+                            <h3 style='margin: 0; font-size: 0.8rem;'>$lockIcon" . strtoupper($level['title']) . "</h3>
                             <span class='badge $difficulty' style='background: $difficultyColor; color: #000; font-size: 0.6rem; padding: 0.3rem 0.6rem;'>
                                 " . strtoupper($difficulty) . " $levelNum
                             </span>
@@ -710,9 +839,7 @@ $username = "Guest"; // Default username for testing
                         </p>
                         <div style='display: flex; justify-content: space-between; align-items: center; margin-top: auto;'>
                             <span style='color: var(--accent); font-size: 0.7rem;'>★ {$level['questions']} Questions</span>
-                            <a href='quiz.php?difficulty=$difficulty&level=$levelNum' class='btn' style='font-size: 0.8rem; padding: 0.6rem 1.2rem;'>
-                                Start
-                            </a>
+                            $startButton
                         </div>
                     </div>
                     ";
@@ -728,25 +855,37 @@ $username = "Guest"; // Default username for testing
             $debugLevels = [
                 ['title' => 'SYNTAX ERRORS', 'bugs' => 3],
                 ['title' => 'LOGIC ERRORS', 'bugs' => 4],
-                ['title' => 'DATA STRUCTURES', 'bugs' => 5],
-                ['title' => 'ALGORITHMS', 'bugs' => 6],
-                ['title' => 'PERFORMANCE', 'bugs' => 7],
-                ['title' => 'SECURITY', 'bugs' => 8]
+                ['title' => 'VARIABLES & DATA TYPES', 'bugs' => 3],
+                ['title' => 'FUNCTIONS', 'bugs' => 4],
+                ['title' => 'LOOPS', 'bugs' => 4],
+                ['title' => 'CONDITIONALS', 'bugs' => 3],
+                ['title' => 'LISTS & DICTIONARIES', 'bugs' => 5],
+                ['title' => 'COMMON MISTAKES', 'bugs' => 4]
             ];
+            
+            // Keep only the first 6 levels for beginner (original 2 + 4 new ones)
+            $debugLevels = array_slice($debugLevels, 0, 6);
 
             foreach ($debugLevels as $index => $level) {
                 $levelNum = $index + 1;
-                $difficulty = $levelNum <= 2 ? 'beginner' : ($levelNum <= 4 ? 'intermediate' : 'advanced');
+                $difficulty = 'beginner';
                 $difficultyColor = [
                     'beginner' => '#4CAF50',
                     'intermediate' => '#2196F3',
                     'advanced' => '#f44336'
                 ][$difficulty];
 
+                // Lock all debugging levels
+                $isLocked = true;
+                $lockedClass = 'locked';
+                $disabledStyle = 'opacity: 0.6; pointer-events: none;';
+                $lockIcon = '🔒 ';
+                $debugButton = "<div class='btn' style='font-size: 0.8rem; padding: 0.6rem 1.2rem; opacity: 0.7; background: #666;'>Locked</div>";
+
                 echo "
-                <div class='task-card' data-gamemode='debugging' data-difficulty='$difficulty'>
+                <div class='task-card $lockedClass' data-gamemode='debugging' data-difficulty='$difficulty' style='$disabledStyle'>
                     <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;'>
-                        <h3 style='margin: 0; font-size: 0.8rem;'>" . strtoupper($level['title']) . "</h3>
+                        <h3 style='margin: 0; font-size: 0.8rem;'>$lockIcon" . strtoupper($level['title']) . "</h3>
                         <span class='badge $difficulty' style='background: $difficultyColor; color: #000; font-size: 0.6rem; padding: 0.3rem 0.6rem;'>
                             " . strtoupper($difficulty) . " $levelNum
                         </span>
@@ -756,9 +895,7 @@ $username = "Guest"; // Default username for testing
                     </p>
                     <div style='display: flex; justify-content: space-between; align-items: center; margin-top: auto;'>
                         <span style='color: var(--accent); font-size: 0.7rem;'>★ {$level['bugs']} Bugs to Fix</span>
-                        <a href='debugging.php?level=$levelNum' class='btn' style='font-size: 0.8rem; padding: 0.6rem 1.2rem;'>
-                            Debug
-                        </a>
+                        $debugButton
                     </div>
                 </div>
                 ";
@@ -768,41 +905,43 @@ $username = "Guest"; // Default username for testing
 
         <!-- Endless Mode Section -->
         <h2 style="text-align: center; margin-top: 3rem; font-size: 1.2rem;">ENDLESS MODE</h2>
-        <div class="task-grid" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto;">
-            <div class='task-card' data-gamemode='endless' style="background: linear-gradient(135deg, rgba(0, 20, 30, 0.7), rgba(0, 40, 60, 0.8)); border: 2px solid var(--accent);">
+        <div class="task-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+            <!-- Quiz Endless Mode -->
+            <div class='task-card' data-gamemode='endless-quiz' style="background: linear-gradient(135deg, rgba(30, 0, 50, 0.7), rgba(60, 0, 80, 0.8)); border: 2px solid #9C27B0;">
                 <div style="text-align: center; margin-bottom: 1.5rem;">
-                    <h3 style="margin: 0 0 1rem 0; font-size: 1.2rem; color: var(--accent);">🎮 ENDLESS CHALLENGE</h3>
-                    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
-                        <span class='badge' style='background: #9C27B0; color: #fff; font-size: 0.7rem; padding: 0.3rem 0.8rem;'>
-                            QUIZ MODE
-                        </span>
-                        <span class='badge' style='background: #FF9800; color: #000; font-size: 0.7rem; padding: 0.3rem 0.8rem;'>
-                            DEBUG MODE
-                        </span>
-                    </div>
-                    <p style="color: var(--secondary); font-size: 0.9rem; line-height: 1.5;">
-                        Test your skills with a continuous stream of random challenges.
-                        Switch between quiz questions and debugging tasks seamlessly.
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">❓</div>
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #E1BEE7;">ENDLESS QUIZ</h3>
+                    <p style="color: var(--secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                        Test your Python knowledge with an endless stream of quiz questions. 
+                        The difficulty adapts based on your performance.
                     </p>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
-                    <div style="text-align: center; padding: 1rem; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
-                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">❓</div>
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--accent);">Quiz Challenges</h4>
-                        <p style="margin: 0; font-size: 0.8rem; color: var(--secondary);">Test your Python knowledge with random questions</p>
-                    </div>
-                    <div style="text-align: center; padding: 1rem; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
-                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🐛</div>
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--accent);">Debugging Tasks</h4>
-                        <p style="margin: 0; font-size: 0.8rem; color: var(--secondary);">Find and fix bugs in Python code</p>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <a href="endless.php" class="btn" style="font-size: 1rem; padding: 0.8rem 2rem; background: var(--accent); color: #000; font-weight: bold; border: none;">
-                        START ENDLESS MODE
+                <div style="text-align: center; margin-top: auto;">
+                    <a href="endless.php?mode=quiz" class="btn" style="font-size: 1rem; padding: 0.8rem 2rem; background: #9C27B0; color: #fff; font-weight: bold; border: none; width: 100%;">
+                        START QUIZ MODE
                     </a>
                     <p style="font-size: 0.8rem; color: var(--secondary); margin-top: 0.8rem;">
-                        Difficulty adapts to your skill level
+                        Questions adapt to your skill level
+                    </p>
+                </div>
+            </div>
+
+            <!-- Debugging Endless Mode -->
+            <div class='task-card' data-gamemode='endless-debug' style="background: linear-gradient(135deg, rgba(50, 30, 0, 0.7), rgba(80, 50, 0, 0.8)); border: 2px solid #FF9800;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🐛</div>
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #FFE0B2;">ENDLESS DEBUGGING</h3>
+                    <p style="color: var(--secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                        Hone your debugging skills with an endless stream of buggy code.
+                        Find and fix issues to progress to more challenging problems.
+                    </p>
+                </div>
+                <div style="text-align: center; margin-top: auto;">
+                    <a href="endless.php?mode=debug" class="btn" style="font-size: 1rem; padding: 0.8rem 2rem; background: #FF9800; color: #000; font-weight: bold; border: none; width: 100%;">
+                        START DEBUG MODE
+                    </a>
+                    <p style="font-size: 0.8rem; color: var(--secondary); margin-top: 0.8rem;">
+                        Bugs get trickier as you improve
                     </p>
                 </div>
             </div>
@@ -816,6 +955,26 @@ $username = "Guest"; // Default username for testing
         let gamemodeFilter, difficultyFilter, taskCards;
         let gamemodeMenu, difficultyMenu;
         let hoverTimeout;
+        
+        // Update current time in the taskbar
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
+        }
+        
+        // Update time immediately and every second
+        updateTime();
+        setInterval(updateTime, 1000);
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize elements
@@ -830,130 +989,58 @@ $username = "Guest"; // Default username for testing
             // Initialize dropdowns
             initDropdowns();
             
+            // Add event listeners for filter changes
+            if (gamemodeFilter) {
+                gamemodeFilter.addEventListener('change', function() {
+                    updateDifficultyOptions();
+                    updateTaskFilters();
+                });
+            }
+            
+            if (difficultyFilter) {
+                difficultyFilter.addEventListener('change', updateTaskFilters);
+            }
+            
             // Initial filter update
             updateTaskFilters();
 
-            // Function to show all tasks
-            function showAllTasks() {
-            @keyframes dropdownPopoutOut {
-                from { opacity: 1; transform: translateY(0) scale(1); }
-                to { opacity: 0; transform: translateY(-10px) scale(0.95); }
-            }
-            .filter-dropdown-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(0, 20, 40, 0.95);
-                border: 1px solid var(--primary);
-                border-top: none;
-                border-radius: 0 0 4px 4px;
-                z-index: 1000;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            }
-            .filter-option {
-                padding: 12px 20px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                border-left: 4px solid transparent;
-            }
-            .filter-option:hover {
-                background: rgba(0, 150, 200, 0.3);
-                border-left-color: var(--accent);
-                color: var(--accent);
-            }
-            .filter-dropdown-btn {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-                text-align: left;
-                padding: 0.8rem 1rem;
-                }
+            // Function to update task filters
+            function updateTaskFilters() {
+                const selectedGamemode = gamemodeFilter ? gamemodeFilter.value.toLowerCase() : 'all';
+                const selectedDifficulty = difficultyFilter ? difficultyFilter.value.toLowerCase() : 'all';
                 
-                // If debugging is selected, force difficulty to beginner
-                if (gamemodeFilter.value === 'debugging' && difficultyFilter.value !== 'beginner') {
-                    difficultyFilter.value = 'beginner';
-                    const difficultyBtn = document.querySelector('#difficulty-filter-btn .filter-selected-text');
-                    const beginnerOption = document.querySelector('#difficulty-filter-menu [data-value="beginner"]');
-                    
-                    if (difficultyBtn && beginnerOption) {
-                        difficultyBtn.textContent = 'BEGINNER';
-                        
-                        // Update difficulty options style
-                        const difficultyOptions = document.querySelectorAll('#difficulty-filter-menu .filter-option');
-                        difficultyOptions.forEach(opt => {
-                            opt.style.background = 'transparent';
-                            opt.style.color = 'var(--primary)';
-                            opt.style.opacity = '0.7';
-                        });
-                        
-                        beginnerOption.style.background = 'rgba(0, 150, 200, 0.15)';
-                        beginnerOption.style.color = 'var(--accent)';
-                        beginnerOption.style.opacity = '1';
-                    }
-                }
-                
-                const selectedGamemode = gamemodeFilter.value.toLowerCase();
-                const selectedDifficulty = difficultyFilter.value.toLowerCase();
-                
-                console.log('Filtering tasks with:', { selectedGamemode, selectedDifficulty });
-                
-                // If debugging is selected, force difficulty to beginner
-                if (selectedGamemode === 'debugging' && selectedDifficulty !== 'beginner') {
-                    difficultyFilter.value = 'beginner';
-                    const difficultyBtn = document.querySelector('#difficulty-filter-btn .filter-selected-text');
-                    if (difficultyBtn) {
-                        difficultyBtn.textContent = 'BEGINNER';
-                    }
-                }
-
                 let visibleQuizCards = 0;
                 let visibleDebuggingCards = 0;
                 let visibleEndlessCards = 0;
-                
-                // For debugging: log the current filter values
-                console.log('Filtering by:', {
-                    gamemode: selectedGamemode,
-                    difficulty: selectedDifficulty
-                });
-                
-                // Show all task grids initially
-                document.querySelectorAll('.task-grid').forEach(grid => {
-                    grid.style.display = 'grid';
-                });
-                
-                // Show all section headers initially
+
+                // Reset all section headers to visible first
                 document.querySelectorAll('h2').forEach(header => {
                     header.style.display = 'block';
                 });
 
                 // Filter task cards with animation
                 taskCards.forEach((card, index) => {
-                    const cardGamemode = card.getAttribute('data-gamemode').toLowerCase();
-                    const cardDifficulty = card.getAttribute('data-difficulty').toLowerCase();
+                    const cardGamemode = card.getAttribute('data-gamemode') ? card.getAttribute('data-gamemode').toLowerCase() : '';
+                    const cardDifficulty = card.getAttribute('data-difficulty') ? card.getAttribute('data-difficulty').toLowerCase() : 'all';
+                    const isEndlessCard = cardGamemode.includes('endless');
 
                     // Check if card matches the selected filters
-                    const gamemodeMatch = selectedGamemode === 'all' || cardGamemode === selectedGamemode;
-                    const difficultyMatch = selectedDifficulty === 'all' || cardDifficulty === selectedDifficulty;
+                    let gamemodeMatch = false;
+                    if (selectedGamemode === 'all') {
+                        gamemodeMatch = true;
+                    } else if (selectedGamemode === 'endless') {
+                        gamemodeMatch = isEndlessCard;
+                    } else if (selectedGamemode === 'quiz') {
+                        gamemodeMatch = cardGamemode === 'quiz';
+                    } else if (selectedGamemode === 'debugging') {
+                        gamemodeMatch = cardGamemode === 'debugging';
+                    }
                     
-                    // Special case: If debugging is selected, only show debugging cards
-                    const isDebuggingMode = selectedGamemode === 'debugging' && cardGamemode === 'debugging';
-                    const isMatchingDebugging = isDebuggingMode && 
-                        (selectedDifficulty === 'all' || cardDifficulty === selectedDifficulty);
+                    const difficultyMatch = selectedDifficulty === 'all' || 
+                                          cardDifficulty === selectedDifficulty ||
+                                          (isEndlessCard && selectedDifficulty === 'beginner');
                     
-                    // Debug log for each card's attributes
-                    console.log('Card:', {
-                        element: card,
-                        gamemode: cardGamemode,
-                        difficulty: cardDifficulty,
-                        matches: { gamemodeMatch, difficultyMatch }
-                    });
-
-                    if ((gamemodeMatch && difficultyMatch) || isMatchingDebugging) {
+                    if (gamemodeMatch && difficultyMatch) {
                         // Show card with staggered animation
                         setTimeout(() => {
                             card.style.display = 'flex';
@@ -1013,11 +1100,29 @@ $username = "Guest"; // Default username for testing
                 const gamemodeOptions = document.querySelectorAll('#gamemode-filter-menu .filter-option');
                 const difficultyOptions = document.querySelectorAll('#difficulty-filter-menu .filter-option');
 
-                // Show/hide gamemode dropdown on hover
+                if (!gamemodeBtn || !difficultyBtn || !gamemodeMenu || !difficultyMenu) {
+                    console.error('Dropdown elements not found');
+                    return;
+                }
+
+                // Add click handlers to buttons
+                gamemodeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMenu(gamemodeMenu, difficultyMenu);
+                });
+
+                difficultyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (gamemodeFilter.value !== 'endless') {
+                        toggleMenu(difficultyMenu, gamemodeMenu);
+                    }
+                });
+
+                // Show/hide gamemode dropdown on hover (optional)
                 gamemodeBtn.addEventListener('mouseenter', () => showMenu(gamemodeMenu, difficultyMenu));
                 gamemodeMenu.addEventListener('mouseenter', () => showMenu(gamemodeMenu, difficultyMenu));
                 
-                // Show/hide difficulty dropdown on hover
+                // Show/hide difficulty dropdown on hover (optional)
                 difficultyBtn.addEventListener('mouseenter', () => {
                     if (gamemodeFilter.value !== 'endless') {
                         showMenu(difficultyMenu, gamemodeMenu);
@@ -1037,11 +1142,17 @@ $username = "Guest"; // Default username for testing
 
                 // Handle option selection
                 gamemodeOptions.forEach(option => {
-                    option.addEventListener('click', () => selectOption(option, gamemodeMenu, gamemodeBtn, true));
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectOption(option, gamemodeMenu, gamemodeBtn, true);
+                    });
                 });
 
                 difficultyOptions.forEach(option => {
-                    option.addEventListener('click', () => selectOption(option, difficultyMenu, difficultyBtn, false));
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectOption(option, difficultyMenu, difficultyBtn, false);
+                    });
                 });
 
                 // Close dropdowns when clicking outside
@@ -1053,13 +1164,30 @@ $username = "Guest"; // Default username for testing
                         hideMenu(difficultyMenu);
                     }
                 });
+                
+                // Initialize difficulty options based on current gamemode
+                updateDifficultyOptions();
+            }
+
+            function toggleMenu(menuToShow, menuToHide) {
+                if (menuToShow.style.display === 'block') {
+                    hideMenu(menuToShow);
+                } else {
+                    showMenu(menuToShow, menuToHide);
+                }
             }
 
             function showMenu(menuToShow, menuToHide) {
                 clearTimeout(hoverTimeout);
                 hideMenu(menuToHide);
-                menuToShow.style.display = 'block';
-                menuToShow.style.animation = 'dropdownPopout 0.2s ease-out forwards';
+                if (menuToShow) {
+                    menuToShow.style.display = 'block';
+                    menuToShow.style.opacity = '0';
+                    menuToShow.style.animation = 'dropdownPopout 0.2s ease-out forwards';
+                    setTimeout(() => {
+                        menuToShow.style.opacity = '1';
+                    }, 10);
+                }
             }
 
             function hideMenu(menu) {
@@ -1075,34 +1203,92 @@ $username = "Guest"; // Default username for testing
                 hoverTimeout = setTimeout(() => hideMenu(menu), 300);
             }
 
+            function updateDifficultyOptions() {
+                const difficultyOptions = document.querySelectorAll('#difficulty-filter-menu .filter-option');
+                const selectedGamemode = gamemodeFilter ? gamemodeFilter.value : 'all';
+                
+                if (selectedGamemode === 'debugging') {
+                    // Show only "beginner" option (hide "all", "intermediate", "advanced")
+                    difficultyOptions.forEach(opt => {
+                        const optValue = opt.getAttribute('data-value');
+                        if (optValue === 'beginner') {
+                            opt.style.display = 'block';
+                        } else {
+                            opt.style.display = 'none';
+                        }
+                    });
+                    
+                    // Force difficulty to beginner
+                    if (difficultyFilter) {
+                        difficultyFilter.value = 'beginner';
+                    }
+                    const beginnerOption = document.querySelector('#difficulty-filter-menu [data-value="beginner"]');
+                    const difficultySelected = document.getElementById('difficulty-selected');
+                    if (beginnerOption && difficultySelected) {
+                        difficultySelected.textContent = 'BEGINNER';
+                        
+                        // Update difficulty options style
+                        difficultyOptions.forEach(opt => {
+                            opt.style.background = 'transparent';
+                            opt.style.borderLeftColor = 'transparent';
+                            opt.style.color = 'var(--primary)';
+                        });
+                        beginnerOption.style.background = 'rgba(0, 150, 200, 0.3)';
+                        beginnerOption.style.borderLeftColor = 'var(--accent)';
+                        beginnerOption.style.color = 'var(--accent)';
+                    }
+                } else {
+                    // Show all difficulty options
+                    difficultyOptions.forEach(opt => {
+                        opt.style.display = 'block';
+                    });
+                }
+            }
+
             function selectOption(option, menu, btn, isGamemode) {
                 const value = option.getAttribute('data-value');
                 const input = isGamemode ? gamemodeFilter : difficultyFilter;
-                input.value = value;
-
-                // Update button text
-                const btnText = btn.querySelector('span:first-child');
-                btnText.textContent = option.textContent.trim();
-
-                // Update active state
-                menu.querySelectorAll('.filter-option').forEach(opt => {
-                    opt.style.background = 'transparent';
-                    opt.style.borderLeftColor = 'transparent';
-                    opt.style.color = 'var(--primary)';
-                });
+                if (input) {
+                    input.value = value;
+                }
                 
-                option.style.background = 'rgba(0, 150, 200, 0.3)';
-                option.style.borderLeftColor = 'var(--accent)';
-                option.style.color = 'var(--accent)';
+                // Update the button text - use the correct selector
+                if (btn) {
+                    const selectedSpan = isGamemode ? 
+                        document.getElementById('gamemode-selected') : 
+                        document.getElementById('difficulty-selected');
+                    
+                    if (selectedSpan) {
+                        selectedSpan.textContent = option.textContent.trim();
+                    }
+                }
+                
+                // Update active state in menu
+                if (menu) {
+                    menu.querySelectorAll('.filter-option').forEach(opt => {
+                        opt.style.background = 'transparent';
+                        opt.style.borderLeftColor = 'transparent';
+                        opt.style.color = 'var(--primary)';
+                    });
+                    
+                    option.style.background = 'rgba(0, 150, 200, 0.3)';
+                    option.style.borderLeftColor = 'var(--accent)';
+                    option.style.color = 'var(--accent)';
+                }
+                
+                // Close the menu
+                hideMenu(menu);
 
                 // Handle special cases
                 if (isGamemode) {
                     if (value === 'endless') {
-                        difficultyFilter.value = 'all';
+                        if (difficultyFilter) {
+                            difficultyFilter.value = 'all';
+                        }
                         const allOption = document.querySelector('#difficulty-filter-menu [data-value="all"]');
-                        if (allOption) {
-                            const difficultyBtnText = document.querySelector('#difficulty-filter-btn span:first-child');
-                            difficultyBtnText.textContent = 'ALL LEVELS';
+                        const difficultySelected = document.getElementById('difficulty-selected');
+                        if (allOption && difficultySelected) {
+                            difficultySelected.textContent = 'ALL LEVELS';
                             
                             // Update difficulty options style
                             const difficultyOptions = document.querySelectorAll('#difficulty-filter-menu .filter-option');
@@ -1115,6 +1301,12 @@ $username = "Guest"; // Default username for testing
                             allOption.style.borderLeftColor = 'var(--accent)';
                             allOption.style.color = 'var(--accent)';
                         }
+                    } else if (value === 'debugging') {
+                        // Update difficulty options to show only beginner
+                        updateDifficultyOptions();
+                    } else {
+                        // Show all difficulty options for other gamemodes
+                        updateDifficultyOptions();
                     }
                 }
 
@@ -1123,17 +1315,71 @@ $username = "Guest"; // Default username for testing
             }
 
             // =============================================
-            // Initialize
+            // Profile Dropdown Functionality
             // =============================================
-            function init() {
-                initDropdowns();
-                updateTaskFilters(); // Initial filter on page load
+            function initProfileDropdown() {
+                const profileDropdown = document.querySelector('.taskbar-right .dropdown');
+                if (!profileDropdown) return;
+                
+                const dropbtn = profileDropdown.querySelector('.dropbtn');
+                const dropdownContent = profileDropdown.querySelector('.dropdown-content');
+                
+                if (!dropbtn || !dropdownContent) return;
+                
+                let isClickMode = false;
+                let hoverTimeout = null;
+                
+                // Toggle dropdown on button click
+                dropbtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    isClickMode = true;
+                    const isOpen = dropdownContent.style.display === 'block';
+                    
+                    // Close all dropdowns first
+                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                        if (dropdown !== dropdownContent && dropdown.style.display === 'block') {
+                            dropdown.style.display = 'none';
+                        }
+                    });
+                    
+                    // Toggle this dropdown
+                    if (isOpen) {
+                        dropdownContent.style.display = 'none';
+                        isClickMode = false;
+                    } else {
+                        dropdownContent.style.display = 'block';
+                        dropdownContent.style.animation = 'dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+                    }
+                });
+                
+                // Handle hover (only if not in click mode)
+                profileDropdown.addEventListener('mouseenter', function() {
+                    if (!isClickMode) {
+                        clearTimeout(hoverTimeout);
+                        dropdownContent.style.display = 'block';
+                        dropdownContent.style.animation = 'dropdownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+                    }
+                });
+                
+                profileDropdown.addEventListener('mouseleave', function() {
+                    if (!isClickMode) {
+                        hoverTimeout = setTimeout(function() {
+                            dropdownContent.style.display = 'none';
+                        }, 200);
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!profileDropdown.contains(e.target)) {
+                        dropdownContent.style.display = 'none';
+                        isClickMode = false;
+                    }
+                });
             }
             
-            // Initialize the page
-            init();
-
-            }); // End of DOMContentLoaded
+            // Initialize profile dropdown
+            initProfileDropdown();
 
             // =============================================
             // Animation Keyframes
@@ -1152,114 +1398,9 @@ $username = "Guest"; // Default username for testing
                     from { opacity: 1; transform: translateY(0) scale(1); }
                     to { opacity: 0; transform: translateY(-10px) scale(0.95); }
                 }
-                @keyframes dropdownPopoutOut {
-                    from { opacity: 1; transform: translateY(0) scale(1); }
-                    to { opacity: 0; transform: translateY(-10px) scale(0.95); }
-                }
-                .filter-dropdown-menu {
-                    display: none;
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                    right: 0;
-                    background: rgba(0, 20, 40, 0.95);
-                    border: 1px solid var(--primary);
-                    border-top: none;
-                    border-radius: 0 0 4px 4px;
-                    z-index: 1000;
-                    overflow: hidden;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-                }
-                .filter-option {
-                    padding: 12px 20px;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    border-left: 4px solid transparent;
-                }
-                .filter-option:hover {
-                    background: rgba(0, 150, 200, 0.3);
-                    border-left-color: var(--accent);
-                    color: var(--accent);
-                }
-                .filter-dropdown-btn {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    width: 100%;
-                    text-align: left;
-                    padding: 0.8rem 1rem;
-                    background: rgba(0, 20, 40, 0.8);
-                    border: 1px solid var(--primary);
-                    color: var(--primary);
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-family: 'Press Start 2P', cursive;
-                    font-size: 0.7rem;
-                    letter-spacing: 0.5px;
-                }
-                .filter-dropdown-btn:hover {
-                    background: rgba(0, 30, 60, 0.9);
-                    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-                }
-                .filter-dropdown-btn span:last-child {
-                                0 0 75px rgba(0, 255, 255, 0.1);
-                    border-color: var(--accent);
-                    animation: dropdownPulse 2s ease-in-out infinite,
-                               dropdownGlow 2s ease-in-out infinite,
-                               dropdownScale 2s ease-in-out infinite;
-                    transform: translateY(-2px);
-                }
-                .filter-dropdown-btn:focus {
-                    outline: none;
-                    background: linear-gradient(135deg, rgba(0, 30, 50, 0.95), rgba(0, 60, 90, 0.95));
-                    box-shadow: 0 0 25px rgba(0, 255, 255, 0.6),
-                                0 0 50px rgba(0, 255, 255, 0.3);
-                    border-color: var(--accent);
-                }
-                .custom-filter-dropdown {
-                    transition: transform 0.3s ease;
-                }
-                .custom-filter-dropdown:hover {
-                    transform: translateY(-3px);
-                }
-                .custom-filter-dropdown label {
-                    transition: all 0.3s ease;
-                }
-                .custom-filter-dropdown:hover label {
-                    color: var(--accent);
-                    text-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
-                }
-                .filter-dropdown-menu {
-                    transform-origin: top center;
-                }
-                .filter-option {
-                    position: relative;
-                }
-                .filter-option:not(:last-child) {
-                    border-bottom: 1px solid rgba(255, 0, 255, 0.1);
-                }
             `;
             document.head.appendChild(style);
-
-            // Initialize active states for options
-            customDropdowns.forEach(dropdown => {
-                const hiddenInput = dropdown.querySelector('input[type="hidden"]');
-                const options = dropdown.querySelectorAll('.filter-option');
-                const currentValue = hiddenInput.value;
-                
-                options.forEach(option => {
-                    if (option.getAttribute('data-value') === currentValue) {
-                        option.style.background = 'rgba(0, 150, 200, 0.4)';
-                        option.style.borderLeftColor = 'var(--accent)';
-                        option.style.color = 'var(--accent)';
-                    }
-                });
-            });
-
-            // Initialize filter on page load
-            filterTasks();
-        }); // Close the DOMContentLoaded event listener
+        }); // End of DOMContentLoaded
     </script>
 </body>
 </html>
